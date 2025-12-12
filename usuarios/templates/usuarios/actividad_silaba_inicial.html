@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Actividad: Sí­laba inicial</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <style>
+        body { margin: 0; font-family: Arial, sans-serif; background: #e3f2fd; }
+        .container {
+            max-width: 600px;
+            margin: 40px auto;
+            background: #ffffff;
+            border-radius: 16px;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.15);
+            padding: 20px;
+        }
+        h1 { text-align: center; color: #1565c0; }
+        .palabra {
+            text-align: center;
+            font-size: 40px;
+            margin: 20px 0;
+        }
+        form { text-align: center; }
+        .opciones {
+            margin-top: 10px;
+        }
+        .opciones label {
+            margin: 0 10px;
+            font-size: 18px;
+        }
+        button {
+            margin-top: 10px;
+            padding: 8px 16px;
+            border-radius: 10px;
+            border: none;
+            background: #1565c0;
+            color: white;
+            cursor: pointer;
+        }
+        .resultado {
+            margin-top: 15px;
+            text-align: center;
+            font-size: 18px;
+        }
+        .nav {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 25px;
+        }
+        .nav a {
+            text-decoration: none;
+            padding: 8px 12px;
+            border-radius: 8px;
+            background: #eeeeee;
+            color: #333;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>🧩 Sí­laba inicial</h1>
+
+    <div class="palabra">
+        CASA
+    </div>
+
+    <form method="POST">
+        {% csrf_token %}
+        <p>Elige la sílaba con la que empieza la palabra:</p>
+
+        <div class="opciones">
+            <label>
+                <input type="radio" name="respuesta" value="ca"> ca
+            </label>
+            <label>
+                <input type="radio" name="respuesta" value="sa"> sa
+            </label>
+            <label>
+                <input type="radio" name="respuesta" value="co"> co
+            </label>
+        </div>
+
+        <button type="submit">Comprobar</button>
+    </form>
+
+    {% if resultado %}
+        <div class="resultado">{{ resultado }}</div>
+    {% endif %}
+
+    <div class="nav">
+        <a href="{% url 'actividad_vocal_faltante' %}">⬅ Anterior</a>
+        <a href="{% url 'menu_actividades' %}">Volver al menú 🏠</a>
+    </div>
+</div>
+
+</body>
+</html>

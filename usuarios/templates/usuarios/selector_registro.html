@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Registro - Método Troncoso</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: linear-gradient(to bottom, #d7ecff, #f6fbff);
+        }
+
+        nav {
+            background: #ffffff;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+            padding: 15px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        nav .logo {
+            font-size: 24px;
+            font-weight: bold;
+            color: #0077c8;
+        }
+
+        nav .menu a {
+            margin-left: 20px;
+            text-decoration: none;
+            font-size: 16px;
+            color: #0077c8;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 60px auto;
+            padding: 20px;
+            text-align: center;
+        }
+
+        h1 {
+            color: #004f8c;
+            font-size: 32px;
+            margin-bottom: 10px;
+        }
+
+        p {
+            font-size: 18px;
+            color: #444;
+        }
+
+        .cards {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            margin-top: 40px;
+            gap: 20px;
+        }
+
+        .card {
+            background: #ffffff;
+            border-radius: 16px;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+            padding: 25px;
+            width: 300px;
+        }
+
+        .card h2 {
+            color: #004f8c;
+            margin-bottom: 10px;
+        }
+
+        .card p {
+            font-size: 16px;
+            color: #555;
+            margin-bottom: 20px;
+        }
+
+        .card a {
+            display: inline-block;
+            padding: 10px 20px;
+            background: #0077c8;
+            color: white;
+            border-radius: 10px;
+            text-decoration: none;
+            font-size: 16px;
+        }
+
+        @media (max-width: 700px) {
+            .cards {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<nav>
+    <div class="logo">📚 Método Troncoso</div>
+    <div class="menu">
+        <a href="/">Inicio</a>
+        <a href="{% url 'login' %}">Iniciar sesión</a>
+    </div>
+</nav>
+
+<div class="container">
+    <h1>Crear una cuenta</h1>
+    <p>Elige cómo te quieres registrar en la plataforma:</p>
+
+    <div class="cards">
+        <div class="card">
+            <h2>👩‍🏫 Soy docente</h2>
+            <p>Crearé grupos de niños, les asignaré actividades y revisaré su progreso.</p>
+            <a href="{% url 'registro_docente' %}">Registrarme como docente</a>
+        </div>
+
+        <div class="card">
+            <h2>🧒 Soy niño</h2>
+            <p>Mi docente me dará su usuario para poder vincularme a su grupo y hacer actividades.</p>
+            <a href="{% url 'registro_nino' %}">Registrarme como niño</a>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>

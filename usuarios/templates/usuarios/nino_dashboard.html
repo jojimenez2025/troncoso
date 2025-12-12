@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Panel del Niño</title>
+    <style>
+        body {
+            background-color: #e0f0ff;
+            font-family: 'Segoe UI', sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+
+        .dashboard-box {
+            background: white;
+            padding: 30px;
+            border-radius: 16px;
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+            width: 90%;
+            max-width: 500px;
+            text-align: center;
+        }
+
+        h1 {
+            color: #007acc;
+            margin-bottom: 20px;
+        }
+
+        p {
+            margin-bottom: 20px;
+            font-size: 16px;
+        }
+
+        a.button {
+            display: block;
+            margin: 10px auto;
+            background-color: #007acc;
+            color: white;
+            padding: 10px 25px;
+            text-decoration: none;
+            border-radius: 10px;
+            width: 80%;
+        }
+
+        a.button:hover {
+            background-color: #005f99;
+        }
+    </style>
+</head>
+<body>
+    <div class="dashboard-box">
+        <h1>👦 Panel del Niño</h1>
+        <p>¡Hola! Elige una actividad para comenzar a aprender:</p>
+        <a href="{% url 'menu_actividades' %}" class="button">🧩 Actividades</a>
+        <a href="{% url 'logout' %}" class="button">🔓 Salir</a>
+    </div>
+</body>
+</html>

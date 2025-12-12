@@ -1,0 +1,89 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container py-4" style="background-color:#e8f8e8; min-height: 100vh;">
+  <div class="row justify-content-center">
+    <div class="col-md-7 col-lg-5">
+      <div class="card shadow-lg border-0 rounded-4">
+        <div class="card-body text-center p-3">
+
+          <!-- Título -->
+          <h2 class="mb-2" style="color:#1e7e34; font-weight:700; font-size:1.8rem;">
+            🐶 Imagen y palabra
+          </h2>
+          <p class="text-muted mb-3" style="font-size:0.95rem;">
+            Selecciona la palabra que corresponde a la imagen:
+          </p>
+
+          <!-- Imagen (puedes cambiarla por un <img> real si quieres) -->
+          <div class="mb-3" style="font-size:60px;">
+            🐕
+          </div>
+
+          <!-- Mensaje de resultado -->
+          {% if resultado %}
+          <div class="alert {% if '✅' in resultado %}alert-success{% else %}alert-danger{% endif %} mb-3 py-2" style="font-size:0.95rem;">
+            {{ resultado }}
+          </div>
+          {% endif %}
+
+          <!-- Formulario de selección -->
+          <form method="post" class="mb-2">
+            {% csrf_token %}
+
+            <div class="d-grid gap-2">
+
+              <!-- Opción correcta -->
+              <button type="submit"
+                      name="respuesta"
+                      value="perro"
+                      class="btn btn-outline-success rounded-pill py-2"
+                      style="font-size:1rem;">
+                Perro
+              </button>
+
+              <!-- Otras opciones de distracción -->
+              <button type="submit"
+                      name="respuesta"
+                      value="gato"
+                      class="btn btn-outline-secondary rounded-pill py-2"
+                      style="font-size:1rem;">
+                Gato
+              </button>
+
+              <button type="submit"
+                      name="respuesta"
+                      value="pato"
+                      class="btn btn-outline-secondary rounded-pill py-2"
+                      style="font-size:1rem;">
+                Pato
+              </button>
+
+              <button type="submit"
+                      name="respuesta"
+                      value="caballo"
+                      class="btn btn-outline-secondary rounded-pill py-2"
+                      style="font-size:1rem;">
+                Caballo
+              </button>
+
+            </div>
+          </form>
+
+          <!-- Navegación -->
+          <div class="d-flex justify-content-between mt-2">
+            <a href="{% url 'menu_actividades' %}" class="btn btn-link btn-sm">
+              ← Volver al menú
+            </a>
+            <a href="{% url 'actividad_vocal_faltante' %}" class="btn btn-link btn-sm">
+              Siguiente actividad →
+            </a>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+

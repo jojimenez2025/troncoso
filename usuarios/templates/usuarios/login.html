@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Iniciar sesión - Método Troncoso</title>
+    <style>
+        body {
+            background-color: #e0f0ff;
+            font-family: 'Segoe UI', sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+
+        .login-box {
+            background: white;
+            padding: 30px;
+            border-radius: 16px;
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+            width: 90%;
+            max-width: 400px;
+            text-align: center;
+        }
+
+        .logo {
+            font-size: 28px;
+            font-weight: bold;
+            color: #007acc;
+            margin-bottom: 10px;
+        }
+
+        .welcome {
+            font-size: 16px;
+            margin-bottom: 20px;
+            color: #333;
+        }
+
+        input[type="text"],
+        input[type="password"] {
+            width: 90%;
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #ccc;
+            border-radius: 10px;
+        }
+
+        button {
+            background-color: #007acc;
+            color: white;
+            border: none;
+            padding: 10px 30px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: bold;
+            margin-top: 10px;
+        }
+
+        button:hover {
+            background-color: #005f99;
+        }
+
+        .footer-note {
+            font-size: 12px;
+            margin-top: 15px;
+            color: #777;
+        }
+
+        .btn-volver {
+            display: inline-block;
+            margin-top: 15px;
+            padding: 8px 20px;
+            border-radius: 10px;
+            border: 1px solid #007acc;
+            color: #007acc;
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .btn-volver:hover {
+            background-color: #e0f0ff;
+        }
+    </style>
+</head>
+<body>
+    <div class="login-box">
+        <div class="logo">📚 Método Troncoso</div>
+        <div class="welcome">Bienvenido al sistema de aprendizaje para niños con autismo</div>
+
+        <form method="post">
+            {% csrf_token %}
+            <input type="text" name="username" placeholder="Usuario" required>
+            <input type="password" name="password" placeholder="Contraseña" required>
+            <br>
+            <button type="submit">Iniciar sesión</button>
+        </form>
+
+        <div class="footer-note">
+            Acceso para docentes, niños y administradores
+        </div>
+
+        <!-- Botón para regresar a la página principal -->
+        <a href="{% url 'inicio' %}" class="btn-volver">
+            ← Volver a la página principal
+        </a>
+    </div>
+</body>
+</html>

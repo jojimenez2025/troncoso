@@ -1,0 +1,88 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container py-4" style="background-color:#ffeecd; min-height: 100vh;">
+  <div class="row justify-content-center">
+    <div class="col-md-7 col-lg-5">
+      <div class="card shadow-lg border-0 rounded-4">
+        <div class="card-body text-center p-3">
+
+          <!-- Título -->
+          <h2 class="mb-2" style="color:#ff7a00; font-weight:700; font-size:1.8rem;">
+            🔤 Vocal faltante
+          </h2>
+
+          <!-- Palabra -->
+          <div class="mb-3" style="font-size:2.5rem; letter-spacing:0.4rem;">
+            {{ palabra }}
+          </div>
+
+          <p class="text-muted mb-3" style="font-size:0.95rem;">
+            Selecciona la vocal que falta:
+          </p>
+
+          <!-- Mensaje de resultado -->
+          {% if resultado %}
+          <div class="alert {% if '✅' in resultado %}alert-success{% else %}alert-danger{% endif %} mb-3 py-2" style="font-size:0.95rem;">
+            {{ resultado }}
+          </div>
+          {% endif %}
+
+          <!-- Opciones de respuesta -->
+          <form method="post" class="mb-2">
+            {% csrf_token %}
+            <div class="d-grid gap-2 col-6 mx-auto">
+
+              <!-- Correcta -->
+              <button type="submit"
+                      name="respuesta"
+                      value="a"
+                      class="btn btn-outline-warning rounded-pill py-2"
+                      style="font-size:1.2rem;">
+                A
+              </button>
+
+              <!-- Distractores -->
+              <button type="submit"
+                      name="respuesta"
+                      value="e"
+                      class="btn btn-outline-secondary rounded-pill py-2"
+                      style="font-size:1.2rem;">
+                E
+              </button>
+
+              <button type="submit"
+                      name="respuesta"
+                      value="i"
+                      class="btn btn-outline-secondary rounded-pill py-2"
+                      style="font-size:1.2rem;">
+                I
+              </button>
+
+              <button type="submit"
+                      name="respuesta"
+                      value="o"
+                      class="btn btn-outline-secondary rounded-pill py-2"
+                      style="font-size:1.2rem;">
+                O
+              </button>
+
+            </div>
+          </form>
+
+          <!-- Navegación -->
+          <div class="d-flex justify-content-between mt-2">
+            <a href="{% url 'actividad_imagen_palabra' %}" class="btn btn-light btn-sm">
+              ← Anterior
+            </a>
+            <a href="{% url 'actividad_silaba_inicial' %}" class="btn btn-light btn-sm">
+              Siguiente actividad →
+            </a>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Progreso del Niño</title>
+    <style>
+        body {
+            background-color: #e0f0ff;
+            font-family: 'Segoe UI', sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 16px;
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+            width: 90%;
+            max-width: 600px;
+            text-align: center;
+        }
+
+        h1 {
+            color: #007acc;
+            margin-bottom: 20px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+        }
+
+        th, td {
+            border: 1px solid #ccc;
+            padding: 10px;
+        }
+
+        th {
+            background-color: #f2f2f2;
+            color: #333;
+        }
+
+        tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+
+        tr:hover {
+            background-color: #eef;
+        }
+
+        .back-link {
+            display: inline-block;
+            margin-top: 20px;
+            text-decoration: none;
+            background-color: #ccc;
+            color: black;
+            padding: 10px 20px;
+            border-radius: 10px;
+        }
+
+        .back-link:hover {
+            background-color: #bbb;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>📊 Progreso de {{ nino.username }}</h1>
+
+        <table>
+            <tr>
+                <th>Actividad</th>
+                <th>Completado</th>
+            </tr>
+            {% for p in progreso %}
+            <tr>
+                <td>{{ p.actividad.titulo }}</td>
+                <td>{{ p.completado|yesno:"Sí,No" }}</td>
+            </tr>
+            {% endfor %}
+        </table>
+
+        <a href="{% url 'docente_dashboard' %}" class="back-link">🔙 Volver</a>
+    </div>
+</body>
+</html>

@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Progreso de mis niños</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <style>
+        body { margin: 0; font-family: Arial, sans-serif; background: #fafafa; }
+        .topbar {
+            background: #263238;
+            color: white;
+            padding: 10px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .topbar a {
+            color: #ffeb3b;
+            text-decoration: none;
+            margin-left: 15px;
+        }
+        .container {
+            max-width: 1000px;
+            margin: 30px auto;
+            padding: 0 20px;
+        }
+        h1 {
+            color: #263238;
+            text-align: center;
+            margin-bottom: 10px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 25px;
+            background: white;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+        }
+        th, td {
+            padding: 8px 10px;
+            border-bottom: 1px solid #eee;
+            text-align: left;
+            font-size: 14px;
+        }
+        th {
+            background: #eceff1;
+        }
+        tr:nth-child(even) {
+            background: #fafafa;
+        }
+        .tag {
+            display: inline-block;
+            padding: 2px 6px;
+            border-radius: 6px;
+            font-size: 12px;
+            background: #e0f7fa;
+            color: #006064;
+        }
+    </style>
+</head>
+<body>
+
+<div class="topbar">
+    <div>👩‍🏫 Panel de seguimiento</div>
+    <div>
+        <a href="{% url 'docente_dashboard' %}">Volver al panel</a>
+        <a href="{% url 'logout' %}">Cerrar sesión</a>
+    </div>
+</div>
+
+<div class="container">
+    <h1>Progreso de mis niños</h1>
+
+    {% if progreso %}
+        <table>
+            <thead>
+                <tr>
+                    <th>Niño</th>
+                    <th>Actividad</th>
+                    <th>Estado</th>
+                    <th>Fecha completado</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for registro in progreso %}
+                    <tr>
+                        <td>{{ registro.nino.username }}</td>
+                        <td>{{ registro.actividad.nombre }}</td>
+                        <td><span class="tag">Completado</span></td>
+                        <td>{{ registro.fecha_completado|date:"d/m/Y H:i" }}</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        <p>No hay registros de progreso aún. Pide a tus estudiantes que completen actividades.</p>
+    {% endif %}
+</div>
+
+</body>
+</html>

@@ -1,0 +1,244 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block content %}
+<div class="container py-5" style="background-color:#f0f8ff; min-height:100vh;">
+  <div class="row justify-content-center">
+    <div class="col-md-10 col-lg-8">
+      <div class="card shadow-lg border-0 rounded-4">
+        <div class="card-body p-4">
+
+          <h2 class="text-center mb-1" style="color:#004f8c; font-weight:700;">
+            🔍 Objetos iguales
+          </h2>
+          <p class="text-center text-muted mb-1">
+            Nivel {{ nivel }}
+          </p>
+
+          <!-- Botón de audio -->
+          <div class="text-center my-3">
+            <button type="button" id="btn-audio" class="btn btn-outline-primary rounded-pill px-4">
+              🔊 Escuchar instrucción
+            </button>
+            <audio id="audio-instruccion">
+              <source src="{% static 'audio/objetos_iguales_instruccion.mp3' %}" type="audio/mpeg">
+            </audio>
+          </div>
+
+          <p class="text-center mb-4">
+            Arrastra cada dibujo de la fila de abajo y suéltalo
+            <strong>encima del dibujo igual</strong> de la fila de arriba.
+          </p>
+
+          <!-- ZONA DE JUEGO -->
+          <div id="juego-objetos">
+            <!-- Fila superior (objetos fijos) -->
+            <div class="d-flex justify-content-around mb-5 flex-wrap gap-3">
+              {% for obj in objetos %}
+              <div class="objeto-fijo" data-id="{{ obj.id }}">
+                <span class="emoji-fijo">{{ obj.emoji }}</span>
+              </div>
+              {% endfor %}
+            </div>
+
+            <!-- Fila inferior (objetos arrastrables) -->
+            <div class="d-flex justify-content-around flex-wrap gap-3">
+              {% for obj in objetos_desordenados %}
+              <div class="objeto-draggable" draggable="true" data-id="{{ obj.id }}">
+                {{ obj.emoji }}
+              </div>
+              {% endfor %}
+            </div>
+          </div>
+
+          <!-- Mensaje dinámico -->
+          <div id="mensaje" class="text-center mt-4 fw-bold"></div>
+
+          <!-- Formulario oculto: se envía automáticamente al completar -->
+          <form id="form-objetos" method="post" class="text-center mt-3">
+            {% csrf_token %}
+            <input type="hidden" name="completado" id="completado" value="0">
+            <!-- Botón oculto: sólo se usa para el submit automático -->
+            <button type="submit" id="btn-terminar" style="display:none;">
+              Guardar progreso
+            </button>
+          </form>
+
+          <div class="text-center mt-3">
+            <a href="{% url 'menu_actividades' %}" class="btn btn-link">
+              ← Volver al menú de actividades
+            </a>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+  #juego-objetos {
+    user-select: none;
+  }
+
+  .objeto-fijo {
+    width: 170px;              /* más ancho para que quepan los dos dibujos */
+    height: 120px;
+    border-radius: 24px;
+    background-color: #ffffff;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 14px;                 /* espacio entre el dibujo original y el clonado */
+    font-size: 60px;           /* un poco más pequeño para ver bien los dos */
+    transition: box-shadow 0.2s, transform 0.2s, border 0.2s;
+    border: 3px solid transparent;
+  }
+
+  .objeto-fijo.correcto {
+    border-color: #34c759;
+    box-shadow: 0 0 0 4px rgba(52,199,89,0.25);
+  }
+
+  .objeto-fijo.recibiendo {
+    border-color: #007aff;
+    transform: scale(1.03);
+  }
+
+  .emoji-fijo,
+  .emoji-par {
+    display: inline-block;
+  }
+
+  .objeto-draggable {
+    width: 110px;
+    height: 110px;
+    border-radius: 24px;
+    background-color: #ffffff;
+    box-shadow: 0 3px 10px rgba(0,0,0,0.08);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 70px;
+    cursor: grab;
+    transition: transform 0.15s, box-shadow 0.15s, opacity 0.2s;
+  }
+
+  .objeto-draggable.arrastrando {
+    opacity: 0.6;
+    transform: scale(1.05);
+    box-shadow: 0 6px 18px rgba(0,0,0,0.18);
+  }
+
+  .objeto-draggable.usado {
+    opacity: 0.2;
+    cursor: default;
+  }
+</style>
+
+<script>
+  (function () {
+    const draggables = document.querySelectorAll('.objeto-draggable');
+    const fijos = document.querySelectorAll('.objeto-fijo');
+    const mensaje = document.getElementById('mensaje');
+    const inputCompletado = document.getElementById('completado');
+    const form = document.getElementById('form-objetos');
+    const btnAudio = document.getElementById('btn-audio');
+    const audio = document.getElementById('audio-instruccion');
+
+    let elementoActual = null;
+    let formularioEnviado = false;
+
+    // Audio de instrucción
+    if (btnAudio && audio) {
+      btnAudio.addEventListener('click', () => {
+        audio.currentTime = 0;
+        audio.play();
+      });
+    }
+
+    // DRAG & DROP
+    draggables.forEach(el => {
+      el.addEventListener('dragstart', e => {
+        if (el.classList.contains('usado')) {
+          e.preventDefault();
+          return;
+        }
+        elementoActual = el;
+        el.classList.add('arrastrando');
+        e.dataTransfer.effectAllowed = 'move';
+        e.dataTransfer.setData('text/plain', el.dataset.id);
+      });
+
+      el.addEventListener('dragend', () => {
+        elementoActual = null;
+        el.classList.remove('arrastrando');
+      });
+    });
+
+    fijos.forEach(zone => {
+      zone.addEventListener('dragover', e => {
+        e.preventDefault();
+        if (!zone.classList.contains('correcto')) {
+          zone.classList.add('recibiendo');
+        }
+      });
+
+      zone.addEventListener('dragleave', () => {
+        zone.classList.remove('recibiendo');
+      });
+
+      zone.addEventListener('drop', e => {
+        e.preventDefault();
+        zone.classList.remove('recibiendo');
+        if (!elementoActual || zone.classList.contains('correcto')) return;
+
+        const idObjeto = elementoActual.dataset.id;
+        const idZona = zone.dataset.id;
+
+        if (idObjeto === idZona) {
+          // CLON DEL DIBUJO A UN LADO DEL DE ARRIBA
+          const emojiOriginal = zone.querySelector('.emoji-fijo');
+          const clon = emojiOriginal.cloneNode(true);
+          clon.classList.remove('emoji-fijo');
+          clon.classList.add('emoji-par');
+          zone.appendChild(clon);
+
+          zone.classList.add('correcto');
+          elementoActual.classList.add('usado');
+          elementoActual.setAttribute('draggable', 'false');
+
+          mensaje.textContent = "¡Muy bien! Sigue buscando los demás.";
+          mensaje.style.color = "#34c759";
+        } else {
+          mensaje.textContent = "Ese no es igual. Intenta con otro dibujo.";
+          mensaje.style.color = "#ff3b30";
+        }
+
+        comprobarCompletado();
+      });
+    });
+
+    function comprobarCompletado() {
+      const total = fijos.length;
+      const correctas = document.querySelectorAll('.objeto-fijo.correcto').length;
+
+      if (correctas === total && !formularioEnviado) {
+        mensaje.textContent = "✅ ¡Excelente! Has encontrado todos los objetos iguales.";
+        mensaje.style.color = "#34c759";
+        inputCompletado.value = "1";
+        formularioEnviado = true;
+
+        // Pausa corta y se envía el formulario para que el servidor
+        // registre el progreso y redirija automáticamente al siguiente nivel.
+        setTimeout(() => {
+          form.submit();
+        }, 900);
+      }
+    }
+  })();
+</script>
+{% endblock %}
+
+
