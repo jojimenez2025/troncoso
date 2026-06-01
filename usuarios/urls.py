@@ -59,4 +59,10 @@ urlpatterns = [
     views.actividad_foto_palabra,
     name="actividad_foto_palabra",),
     
+    path(
+    "actividad/recompensa-estrellas/",
+    views.actividad_recompensa_estrellas,
+    name="actividad_recompensa_estrellas",),
+    
+    
 ]

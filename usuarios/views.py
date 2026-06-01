@@ -1600,4 +1600,37 @@ def actividad_foto_palabra(request, nivel=1):
 
     return render(request, "usuarios/actividad_foto_palabra.html", contexto)
 
+@login_required
+@user_passes_test(es_nino)
+def actividad_recompensa_estrellas(request):
+    """
+    Bloque 5: Juego breve de recompensa.
+    El niño toca estrellas y al finalizar se guarda el progreso.
+    """
+
+    if request.method == "POST":
+        completado = request.POST.get("completado") == "1"
+
+        if completado:
+            actividad, _ = Actividad.objects.get_or_create(
+                nombre="Juego de recompensa - Atrapa estrellas",
+                defaults={
+                    "descripcion": "Juego breve de recompensa para motivar al niño."
+                }
+            )
+
+            Progreso.objects.create(
+                nino=request.user,
+                actividad=actividad,
+            )
+
+            messages.success(
+                request,
+                "⭐ ¡Muy bien! Terminaste el juego de recompensa."
+            )
+
+            return redirect("menu_actividades")
+
+    return render(request, "usuarios/actividad_recompensa_estrellas.html")
+
 

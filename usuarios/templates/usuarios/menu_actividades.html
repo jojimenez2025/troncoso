@@ -123,6 +123,13 @@
             opacity: 0.75;
         }
 
+        .cards-centradas {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 18px;
+        }
+
         @media (max-width: 700px) {
             .topbar {
                 flex-direction: column;
@@ -199,7 +206,7 @@
             Actividades para relacionar fotografías familiares con palabras como mamá, papá y el nombre del niño.
         </p>
 
-        <div class="card">
+        <div class="cards cards-centradas">
             <h3>📷 Foto y palabra</h3>
             <p>Relaciona fotografías familiares con palabras como MAMÁ, PAPÁ y YO.</p>
             <a href="{% url 'actividad_foto_palabra' 1 %}">Empezar</a>
@@ -251,12 +258,10 @@
             Juego breve de recompensa para motivar al niño después de completar actividades.
         </p>
 
-        <div class="cards">
-            <div class="card pendiente">
-                <h3>⭐ Juego de recompensa</h3>
-                <p>Actividad breve para estimular al niño a seguir aprendiendo.</p>
-                <span class="disabled">Próximamente</span>
-            </div>
+        <div class="card">
+            <h3>⭐ Atrapa estrellas</h3>
+            <p>Juego breve de recompensa para motivar al niño después de completar actividades.</p>
+            <a href="{% url 'actividad_recompensa_estrellas' %}">Empezar</a>
         </div>
     </div>
 
