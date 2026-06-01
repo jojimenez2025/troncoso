@@ -20,9 +20,14 @@ urlpatterns = [
     path('lista_usuarios/', views.lista_usuarios, name='lista_usuarios'),
     path('crear_usuario/', views.crear_usuario, name='crear_usuario'),
 
-    # Progreso (docente)
+    # Progreso(docente)
     path('progreso/', views.ver_progreso_ninos, name='ver_progreso_ninos'),
 
+    path(
+    "actividad/unir-dibujos/<int:nivel>/",
+    views.actividad_unir_dibujos,
+    name="actividad_unir_dibujos"),
+    
     # Actividades (niño)
     path('menu_actividades/', views.menu_actividades, name='menu_actividades'),
     path('actividad/imagen-palabra/', views.actividad_imagen_palabra, name='actividad_imagen_palabra'),
@@ -32,6 +37,26 @@ urlpatterns = [
     path(
     "actividad/objetos-iguales/<int:nivel>/",
     views.actividad_objetos_iguales,
-    name="actividad_objetos_iguales",
-),
+    name="actividad_objetos_iguales",),
+    
+    path(
+    "actividad/buscar-iguales/<int:nivel>/",
+    views.actividad_buscar_iguales,
+    name="actividad_buscar_iguales",),
+    
+    path(
+    "actividad/buscar-dos-modelos/<int:nivel>/",
+    views.actividad_buscar_dos_modelos,
+    name="actividad_buscar_dos_modelos",),
+    
+    path(
+    "actividad/buscar-por-filas/<int:nivel>/",
+    views.actividad_buscar_por_filas,
+    name="actividad_buscar_por_filas",),
+    
+    path(
+    "actividad/foto-palabra/<int:nivel>/",
+    views.actividad_foto_palabra,
+    name="actividad_foto_palabra",),
+    
 ]

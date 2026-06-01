@@ -1,0 +1,277 @@
+
+
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container py-5" style="background-color:#f0f8ff; min-height:100vh;">
+  <div class="row justify-content-center">
+    <div class="col-md-10 col-lg-8">
+      <div class="card shadow-lg border-0 rounded-4">
+        <div class="card-body p-4">
+
+          <h2 class="text-center mb-1" style="color:#004f8c; font-weight:700;">
+            ✏️ {{ titulo_actividad }}
+          </h2>
+
+          <p class="text-center text-muted mb-2">
+            Nivel {{ nivel }}
+          </p>
+
+          <div class="text-center my-3">
+            <button type="button" id="btn-audio" class="btn btn-outline-primary rounded-pill px-4">
+              🔊 Escuchar instrucción
+            </button>
+          </div>
+
+          <p class="text-center mb-4">
+            {{ instruccion_texto }}
+          </p>
+
+          <div id="area-juego" class="area-juego">
+
+            <svg id="lineas-svg"></svg>
+
+            <div class="columna columna-izquierda">
+              {% for obj in izquierda %}
+              <div class="objeto objeto-izquierdo" data-id="{{ obj.id }}">
+                {{ obj.emoji }}
+              </div>
+              {% endfor %}
+            </div>
+
+            <div class="columna columna-derecha">
+              {% for obj in derecha %}
+              <div class="objeto objeto-derecho" data-id="{{ obj.id }}">
+                {{ obj.emoji }}
+              </div>
+              {% endfor %}
+            </div>
+
+          </div>
+
+          <div id="mensaje" class="text-center mt-4 fw-bold"></div>
+
+          <form id="form-unir" method="post" class="text-center mt-3">
+            {% csrf_token %}
+            <input type="hidden" name="completado" id="completado" value="0">
+          </form>
+
+          <div class="text-center mt-3">
+            <a href="{% url 'menu_actividades' %}" class="btn btn-link">
+              ← Volver al menú de actividades
+            </a>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+  .area-juego {
+     position: relative;
+  min-height: 560px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 18px 45px;
+  background: #ffffff;
+  border-radius: 24px;
+  overflow: hidden;
+  }
+
+  #lineas-svg {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 1;
+  }
+
+  .columna {
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+    z-index: 2;
+  }
+
+  .objeto {
+     width: 88px;
+  height: 88px;
+  border-radius: 20px;
+  background: #ffffff;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.12);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 50px;
+  cursor: pointer;
+  border: 4px solid transparent;
+  transition: transform 0.2s, border 0.2s, box-shadow 0.2s;
+  user-select: none;
+  }
+
+  .objeto:hover {
+    transform: scale(1.04);
+  }
+
+  .objeto.seleccionado {
+    border-color: #007aff;
+    box-shadow: 0 0 0 5px rgba(0,122,255,0.20);
+  }
+
+  .objeto.correcto {
+    border-color: #34c759;
+    box-shadow: 0 0 0 5px rgba(52,199,89,0.22);
+  }
+
+  .objeto.error {
+    border-color: #ff3b30;
+  }
+
+  @media (max-width: 700px) {
+    .area-juego {
+      padding: 15px;
+    }
+
+    .objeto {
+      width: 90px;
+      height: 90px;
+      font-size: 52px;
+    }
+  }
+</style>
+
+<script>
+  (function () {
+    const area = document.getElementById("area-juego");
+    const svg = document.getElementById("lineas-svg");
+    const izquierdos = document.querySelectorAll(".objeto-izquierdo");
+    const derechos = document.querySelectorAll(".objeto-derecho");
+    const mensaje = document.getElementById("mensaje");
+    const form = document.getElementById("form-unir");
+    const completado = document.getElementById("completado");
+    const btnAudio = document.getElementById("btn-audio");
+
+    let seleccionado = null;
+    let aciertos = 0;
+    let enviado = false;
+
+    const textoAudio = "{{ instruccion_texto|escapejs }}";
+
+    btnAudio.addEventListener("click", function () {
+      if ("speechSynthesis" in window) {
+        const voz = new SpeechSynthesisUtterance(textoAudio);
+        voz.lang = "es-MX";
+        voz.rate = 0.85;
+        voz.pitch = 1.2;
+
+        const voces = window.speechSynthesis.getVoices();
+        const vozFemenina = voces.find(v =>
+          v.lang.startsWith("es") &&
+          /female|mujer|paulina|monica|sabina|luciana|helena|elvira/i.test(v.name)
+        );
+
+        if (vozFemenina) {
+          voz.voice = vozFemenina;
+        }
+
+        window.speechSynthesis.cancel();
+        window.speechSynthesis.speak(voz);
+      }
+    });
+
+    izquierdos.forEach(item => {
+      item.addEventListener("click", function () {
+        if (item.classList.contains("correcto")) return;
+
+        izquierdos.forEach(i => i.classList.remove("seleccionado"));
+        seleccionado = item;
+        item.classList.add("seleccionado");
+
+        mensaje.textContent = "Ahora toca el dibujo que corresponde.";
+        mensaje.style.color = "#004f8c";
+      });
+    });
+
+    derechos.forEach(item => {
+      item.addEventListener("click", function () {
+        if (!seleccionado) {
+          mensaje.textContent = "Primero toca un dibujo de la izquierda.";
+          mensaje.style.color = "#ff9800";
+          return;
+        }
+
+        if (item.classList.contains("correcto")) return;
+
+        const idIzquierdo = seleccionado.dataset.id;
+        const idDerecho = item.dataset.id;
+
+        if (idIzquierdo === idDerecho) {
+          seleccionado.classList.add("correcto");
+          item.classList.add("correcto");
+
+          seleccionado.classList.remove("seleccionado");
+
+          dibujarLinea(seleccionado, item);
+
+          aciertos += 1;
+          seleccionado = null;
+
+          mensaje.textContent = "✅ Muy bien. Sigue con otro dibujo.";
+          mensaje.style.color = "#34c759";
+
+          revisarFinal();
+        } else {
+          item.classList.add("error");
+          mensaje.textContent = "❌ Ese no corresponde. Intenta otra vez.";
+          mensaje.style.color = "#ff3b30";
+
+          setTimeout(() => {
+            item.classList.remove("error");
+          }, 700);
+        }
+      });
+    });
+
+    function dibujarLinea(origen, destino) {
+      const areaRect = area.getBoundingClientRect();
+      const r1 = origen.getBoundingClientRect();
+      const r2 = destino.getBoundingClientRect();
+
+      const x1 = r1.right - areaRect.left;
+      const y1 = r1.top + r1.height / 2 - areaRect.top;
+
+      const x2 = r2.left - areaRect.left;
+      const y2 = r2.top + r2.height / 2 - areaRect.top;
+
+      const linea = document.createElementNS("http://www.w3.org/2000/svg", "line");
+      linea.setAttribute("x1", x1);
+      linea.setAttribute("y1", y1);
+      linea.setAttribute("x2", x2);
+      linea.setAttribute("y2", y2);
+      linea.setAttribute("stroke", "#34c759");
+      linea.setAttribute("stroke-width", "6");
+      linea.setAttribute("stroke-linecap", "round");
+
+      svg.appendChild(linea);
+    }
+
+    function revisarFinal() {
+      if (aciertos === izquierdos.length && !enviado) {
+        enviado = true;
+        completado.value = "1";
+
+        mensaje.textContent = "🎉 ¡Excelente! Terminaste este nivel.";
+        mensaje.style.color = "#198754";
+
+        setTimeout(() => {
+          form.submit();
+        }, 1200);
+      }
+    }
+  })();
+</script>
+{% endblock %}

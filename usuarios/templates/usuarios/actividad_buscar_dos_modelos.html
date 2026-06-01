@@ -1,0 +1,237 @@
+
+
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container py-5" style="background-color:#f0f8ff; min-height:100vh;">
+  <div class="row justify-content-center">
+    <div class="col-md-10 col-lg-8">
+      <div class="card shadow-lg border-0 rounded-4">
+        <div class="card-body p-4">
+
+          <h2 class="text-center mb-1" style="color:#004f8c; font-weight:700;">
+            🔎 {{ titulo_actividad }}
+          </h2>
+
+          <p class="text-center text-muted mb-2">
+            Nivel {{ nivel }}
+          </p>
+
+          <div class="text-center my-3">
+            <button type="button" id="btn-audio" class="btn btn-outline-primary rounded-pill px-4">
+              🔊 Escuchar instrucción
+            </button>
+          </div>
+
+          <p class="text-center mb-4">
+            {{ instruccion_texto }}
+          </p>
+
+          <!-- MODELOS -->
+          <div class="modelos-box text-center mb-4">
+            <p class="mb-2 fw-bold">Dibujos modelo</p>
+
+            <div class="d-flex justify-content-center gap-4 flex-wrap">
+              {% for modelo in modelos %}
+              <div class="modelo" data-id="{{ modelo.id }}">
+                {{ modelo.emoji }}
+              </div>
+              {% endfor %}
+            </div>
+          </div>
+
+          <hr>
+
+          <!-- OPCIONES -->
+          <div class="opciones-grid mt-4">
+            {% for obj in opciones %}
+            <button type="button"
+                    class="opcion"
+                    data-id="{{ obj.id }}">
+              {{ obj.emoji }}
+            </button>
+            {% endfor %}
+          </div>
+
+          <div id="mensaje" class="text-center mt-4 fw-bold"></div>
+
+          <form id="form-buscar-dos" method="post" class="text-center mt-3">
+            {% csrf_token %}
+            <input type="hidden" name="completado" id="completado" value="0">
+          </form>
+
+          <div class="text-center mt-3">
+            <a href="{% url 'menu_actividades' %}" class="btn btn-link">
+              ← Volver al menú de actividades
+            </a>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+  .modelos-box {
+    background: #ffffff;
+    border-radius: 22px;
+    padding: 18px;
+    box-shadow: 0 3px 10px rgba(0,0,0,0.08);
+  }
+
+  .modelo {
+    width: 115px;
+    height: 115px;
+    border-radius: 24px;
+    background: #eaf6ff;
+    border: 4px solid #0077c8;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 64px;
+  }
+
+  .opciones-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
+    justify-items: center;
+  }
+
+  .opcion {
+    width: 92px;
+    height: 92px;
+    border-radius: 20px;
+    border: 4px solid transparent;
+    background: #ffffff;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.12);
+    font-size: 50px;
+    cursor: pointer;
+    transition: transform 0.2s, border 0.2s, opacity 0.2s;
+  }
+
+  .opcion:hover {
+    transform: scale(1.05);
+  }
+
+  .opcion.correcto {
+    border-color: #34c759;
+    background: #e9ffe9;
+  }
+
+  .opcion.error {
+    border-color: #ff3b30;
+    background: #ffecec;
+  }
+
+  .opcion.bloqueado {
+    pointer-events: none;
+    opacity: 0.75;
+  }
+
+  @media (max-width: 700px) {
+    .opciones-grid {
+      grid-template-columns: repeat(3, 1fr);
+    }
+
+    .opcion {
+      width: 82px;
+      height: 82px;
+      font-size: 44px;
+    }
+
+    .modelo {
+      width: 95px;
+      height: 95px;
+      font-size: 54px;
+    }
+  }
+</style>
+
+<script>
+  (function () {
+    const modelos = document.querySelectorAll(".modelo");
+    const opciones = document.querySelectorAll(".opcion");
+    const mensaje = document.getElementById("mensaje");
+    const form = document.getElementById("form-buscar-dos");
+    const completado = document.getElementById("completado");
+    const btnAudio = document.getElementById("btn-audio");
+
+    const idsModelos = Array.from(modelos).map(modelo => modelo.dataset.id);
+
+    const totalCorrectos = Array.from(opciones).filter(opcion =>
+      idsModelos.includes(opcion.dataset.id)
+    ).length;
+
+    let aciertos = 0;
+    let enviado = false;
+
+    const textoAudio = "{{ instruccion_texto|escapejs }}";
+
+    btnAudio.addEventListener("click", function () {
+      if ("speechSynthesis" in window) {
+        const voz = new SpeechSynthesisUtterance(textoAudio);
+        voz.lang = "es-MX";
+        voz.rate = 0.85;
+        voz.pitch = 1.2;
+
+        const voces = window.speechSynthesis.getVoices();
+        const vozFemenina = voces.find(v =>
+          v.lang.startsWith("es") &&
+          /female|mujer|paulina|monica|sabina|luciana|helena|elvira/i.test(v.name)
+        );
+
+        if (vozFemenina) {
+          voz.voice = vozFemenina;
+        }
+
+        window.speechSynthesis.cancel();
+        window.speechSynthesis.speak(voz);
+      }
+    });
+
+    opciones.forEach(opcion => {
+      opcion.addEventListener("click", function () {
+        if (opcion.classList.contains("bloqueado")) return;
+
+        const idOpcion = opcion.dataset.id;
+
+        if (idsModelos.includes(idOpcion)) {
+          opcion.classList.add("correcto", "bloqueado");
+          aciertos++;
+
+          mensaje.textContent = "✅ Muy bien. Sigue buscando.";
+          mensaje.style.color = "#34c759";
+
+          revisarFinal();
+        } else {
+          opcion.classList.add("error");
+
+          mensaje.textContent = "❌ Ese dibujo no es modelo. Busca otro.";
+          mensaje.style.color = "#ff3b30";
+
+          setTimeout(() => {
+            opcion.classList.remove("error");
+          }, 700);
+        }
+      });
+    });
+
+    function revisarFinal() {
+      if (aciertos === totalCorrectos && !enviado) {
+        enviado = true;
+        completado.value = "1";
+
+        mensaje.textContent = "🎉 ¡Excelente! Encontraste todos los dibujos modelo.";
+        mensaje.style.color = "#198754";
+
+        setTimeout(() => {
+          form.submit();
+        }, 1200);
+      }
+    }
+  })();
+</script>
+{% endblock %}
+

@@ -8,9 +8,9 @@
       <div class="card shadow-lg border-0 rounded-4">
         <div class="card-body p-4">
 
-          <h2 class="text-center mb-1" style="color:#004f8c; font-weight:700;">
-            🔍 Objetos iguales
-          </h2>
+         <h2 class="text-center mb-1" style="color:#004f8c; font-weight:700;">
+  🔍 {{ titulo_actividad }}
+        </h2>
           <p class="text-center text-muted mb-1">
             Nivel {{ nivel }}
           </p>
@@ -26,9 +26,9 @@
           </div>
 
           <p class="text-center mb-4">
-            Arrastra cada dibujo de la fila de abajo y suéltalo
-            <strong>encima del dibujo igual</strong> de la fila de arriba.
+           {{ instruccion_texto }}
           </p>
+
 
           <!-- ZONA DE JUEGO -->
           <div id="juego-objetos">
@@ -199,11 +199,11 @@
 
         if (idObjeto === idZona) {
           // CLON DEL DIBUJO A UN LADO DEL DE ARRIBA
-          const emojiOriginal = zone.querySelector('.emoji-fijo');
-          const clon = emojiOriginal.cloneNode(true);
-          clon.classList.remove('emoji-fijo');
+          const clon = document.createElement('span');
           clon.classList.add('emoji-par');
+          clon.textContent = elementoActual.textContent.trim();
           zone.appendChild(clon);
+
 
           zone.classList.add('correcto');
           elementoActual.classList.add('usado');

@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -15,7 +16,7 @@
         .topbar {
             background: #004f8c;
             color: white;
-            padding: 10px 20px;
+            padding: 12px 24px;
             display: flex;
             justify-content: space-between;
             align-items: center;
@@ -25,55 +26,113 @@
             color: #ffeb3b;
             text-decoration: none;
             margin-left: 15px;
+            font-weight: bold;
         }
 
         .container {
-            max-width: 960px;
-            margin: 40px auto;
+            max-width: 1100px;
+            margin: 35px auto;
             padding: 0 20px;
         }
 
         h1 {
             text-align: center;
             color: #004f8c;
+            margin-bottom: 10px;
+        }
+
+        .intro {
+            text-align: center;
+            color: #444;
+            font-size: 17px;
+            margin-bottom: 35px;
+        }
+
+        .bloque {
+            background: white;
+            border-radius: 20px;
+            padding: 25px;
+            margin-bottom: 28px;
+            box-shadow: 0 4px 14px rgba(0,0,0,0.10);
+        }
+
+        .bloque h2 {
+            color: #004f8c;
+            margin-top: 0;
+            margin-bottom: 8px;
+        }
+
+        .bloque-descripcion {
+            color: #555;
+            margin-bottom: 20px;
+            font-size: 15px;
         }
 
         .cards {
             display: flex;
             flex-wrap: wrap;
-            gap: 20px;
-            margin-top: 30px;
+            gap: 18px;
             justify-content: center;
         }
 
         .card {
-            background: white;
+            background: #f9fcff;
             padding: 20px;
             border-radius: 16px;
-            box-shadow: 0 3px 10px rgba(0,0,0,0.1);
-            width: 280px;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.08);
+            width: 260px;
             text-align: center;
+            border: 2px solid #e3f1ff;
         }
 
-        .card h2 {
+        .card h3 {
+            margin-top: 0;
             margin-bottom: 10px;
+            color: #004f8c;
         }
 
         .card p {
             font-size: 14px;
             color: #555;
-            min-height: 50px;
+            min-height: 48px;
         }
 
-        .card a {
+        .card a,
+        .card .disabled {
             display: inline-block;
             margin-top: 10px;
-            padding: 8px 15px;
-            border-radius: 10px;
+            padding: 9px 18px;
+            border-radius: 12px;
             background: #0077c8;
             color: white;
             text-decoration: none;
             font-size: 14px;
+            font-weight: bold;
+        }
+
+        .card a:hover {
+            background: #005f99;
+        }
+
+        .card .disabled {
+            background: #aaa;
+            cursor: not-allowed;
+        }
+
+        .pendiente {
+            opacity: 0.75;
+        }
+
+        @media (max-width: 700px) {
+            .topbar {
+                flex-direction: column;
+                gap: 10px;
+                text-align: center;
+            }
+
+            .card {
+                width: 100%;
+            }
         }
     </style>
 </head>
@@ -88,35 +147,121 @@
 </div>
 
 <div class="container">
-    <h1>Elige una actividad</h1>
+    <h1>Elige un bloque de aprendizaje</h1>
+    <p class="intro">
+        Las actividades están organizadas por bloques para avanzar poco a poco.
+    </p>
 
-    <div class="cards">
-        <div class="card">
-            <h2>🐶 Imagen y palabra</h2>
-            <p>Selecciona la palabra correcta que corresponde a la imagen.</p>
-            <a href="{% url 'actividad_imagen_palabra' %}">Empezar</a>
-        </div>
+    <!-- BLOQUE 1 -->
+    <div class="bloque">
+        <h2>🧩 Bloque 1: Asociación visual</h2>
+        <p class="bloque-descripcion">
+            Actividades para reconocer objetos iguales, relacionar dibujos y fortalecer la atención visual.
+        </p>
 
-        <div class="card">
-            <h2>🔤 Vocal faltante</h2>
-            <p>Completa la vocal que falta en la palabra.</p>
-            <a href="{% url 'actividad_vocal_faltante' %}">Empezar</a>
-        </div>
+        <div class="cards">
+            <div class="card">
+                <h3>🔍 Objetos iguales</h3>
+                <p>Arrastra cada objeto y colócalo sobre el dibujo que corresponde.</p>
+                <a href="{% url 'actividad_objetos_iguales' 1 %}">Empezar</a>
+            </div>
 
-        <div class="card">
-            <h2>🧩 Sí­laba inicial</h2>
-            <p>Elige la sílaba con la que empieza la palabra.</p>
-            <a href="{% url 'actividad_silaba_inicial' %}">Empezar</a>
-        </div>
+            <div class="card">
+                <h3>✏️ Unir dibujos</h3>
+                <p>Une con una línea los dibujos iguales o relacionados.</p>
+                <a href="{% url 'actividad_unir_dibujos' 1 %}">Empezar</a>
+            </div>
 
-        <!-- NUEVA ACTIVIDAD: OBJETOS IGUALES -->
-        <div class="card">
-            <h2>🔍 Objetos iguales</h2>
-            <p>Busca y empareja los objetos iguales arrastrando las figuras.</p>
-            <a href="{% url 'actividad_objetos_iguales' 1 %}">Empezar</a>
+            <div class="card">
+                <h3>🔎 Buscar iguales</h3>
+                <p>Mira un dibujo modelo y selecciona todos los dibujos iguales.</p>
+                <a href="{% url 'actividad_buscar_iguales' 1 %}">Empezar</a>
+            </div>
+
+            <div class="card">
+                <h3>🔎 Buscar dos modelos</h3>
+                <p>Mira dos dibujos modelo y selecciona todos los iguales.</p>
+                <a href="{% url 'actividad_buscar_dos_modelos' 1 %}">Empezar</a>
+            </div>
+
+            <div class="card">
+                <h3>🔎 Buscar por filas</h3>
+                <p>Mira el modelo de cada fila y selecciona los dibujos iguales.</p>
+                <a href="{% url 'actividad_buscar_por_filas' 1 %}">Empezar</a>
+            </div>
         </div>
     </div>
+
+    <!-- BLOQUE 2 -->
+    <div class="bloque">
+        <h2>👨‍👩‍👧 Bloque 2: Foto y palabra</h2>
+        <p class="bloque-descripcion">
+            Actividades para relacionar fotografías familiares con palabras como mamá, papá y el nombre del niño.
+        </p>
+
+        <div class="card">
+            <h3>📷 Foto y palabra</h3>
+            <p>Relaciona fotografías familiares con palabras como MAMÁ, PAPÁ y YO.</p>
+            <a href="{% url 'actividad_foto_palabra' 1 %}">Empezar</a>
+        </div>
+    </div>
+
+    <!-- BLOQUE 3 -->
+    <div class="bloque">
+        <h2>🐶 Bloque 3: Imagen y palabra</h2>
+        <p class="bloque-descripcion">
+            Actividades para asociar imágenes con palabras escritas.
+        </p>
+
+        <div class="cards">
+            <div class="card">
+                <h3>🐶 Imagen y palabra</h3>
+                <p>Selecciona la palabra que corresponde a la imagen.</p>
+                <a href="{% url 'actividad_imagen_palabra' %}">Empezar</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- BLOQUE 4 -->
+    <div class="bloque">
+        <h2>🔤 Bloque 4: Letras y sílabas</h2>
+        <p class="bloque-descripcion">
+            Actividades para trabajar vocales, sílabas iniciales y formación de palabras.
+        </p>
+
+        <div class="cards">
+            <div class="card">
+                <h3>🔤 Vocal faltante</h3>
+                <p>Selecciona la vocal que falta para completar la palabra.</p>
+                <a href="{% url 'actividad_vocal_faltante' %}">Empezar</a>
+            </div>
+
+            <div class="card">
+                <h3>🧩 Sílaba inicial</h3>
+                <p>Elige la sílaba con la que empieza la palabra.</p>
+                <a href="{% url 'actividad_silaba_inicial' %}">Empezar</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- BLOQUE 5 -->
+    <div class="bloque">
+        <h2>🎮 Bloque 5: Recompensa</h2>
+        <p class="bloque-descripcion">
+            Juego breve de recompensa para motivar al niño después de completar actividades.
+        </p>
+
+        <div class="cards">
+            <div class="card pendiente">
+                <h3>⭐ Juego de recompensa</h3>
+                <p>Actividad breve para estimular al niño a seguir aprendiendo.</p>
+                <span class="disabled">Próximamente</span>
+            </div>
+        </div>
+    </div>
+
 </div>
 
 </body>
 </html>
+
