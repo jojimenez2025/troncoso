@@ -1,82 +1,58 @@
 {% extends "base.html" %}
 
 {% block content %}
-<div class="container py-4" style="background-color:#e8f8e8; min-height: 100vh;">
+<div class="container py-5" style="background-color:#f0f8ff; min-height:100vh;">
   <div class="row justify-content-center">
-    <div class="col-md-7 col-lg-5">
+    <div class="col-md-10 col-lg-8">
       <div class="card shadow-lg border-0 rounded-4">
-        <div class="card-body text-center p-3">
+        <div class="card-body p-4">
 
-          <!-- Título -->
-          <h2 class="mb-2" style="color:#1e7e34; font-weight:700; font-size:1.8rem;">
-            🐶 Imagen y palabra
+          <h2 class="text-center mb-1" style="color:#004f8c; font-weight:700;">
+            🐶 {{ titulo_actividad }}
           </h2>
-          <p class="text-muted mb-3" style="font-size:0.95rem;">
-            Selecciona la palabra que corresponde a la imagen:
+
+          <p class="text-center text-muted mb-2">
+            Nivel {{ nivel }}
           </p>
 
-          <!-- Imagen (puedes cambiarla por un <img> real si quieres) -->
-          <div class="mb-3" style="font-size:60px;">
-            🐕
+          <div class="text-center my-3">
+            <button type="button" id="btn-audio" class="btn btn-outline-primary rounded-pill px-4">
+              🔊 Escuchar instrucción
+            </button>
           </div>
 
-          <!-- Mensaje de resultado -->
-          {% if resultado %}
-          <div class="alert {% if '✅' in resultado %}alert-success{% else %}alert-danger{% endif %} mb-3 py-2" style="font-size:0.95rem;">
-            {{ resultado }}
-          </div>
-          {% endif %}
+          <p class="text-center mb-4">
+            {{ instruccion_texto }}
+          </p>
 
-          <!-- Formulario de selección -->
-          <form method="post" class="mb-2">
-            {% csrf_token %}
-
-            <div class="d-grid gap-2">
-
-              <!-- Opción correcta -->
-              <button type="submit"
-                      name="respuesta"
-                      value="perro"
-                      class="btn btn-outline-success rounded-pill py-2"
-                      style="font-size:1rem;">
-                Perro
-              </button>
-
-              <!-- Otras opciones de distracción -->
-              <button type="submit"
-                      name="respuesta"
-                      value="gato"
-                      class="btn btn-outline-secondary rounded-pill py-2"
-                      style="font-size:1rem;">
-                Gato
-              </button>
-
-              <button type="submit"
-                      name="respuesta"
-                      value="pato"
-                      class="btn btn-outline-secondary rounded-pill py-2"
-                      style="font-size:1rem;">
-                Pato
-              </button>
-
-              <button type="submit"
-                      name="respuesta"
-                      value="caballo"
-                      class="btn btn-outline-secondary rounded-pill py-2"
-                      style="font-size:1rem;">
-                Caballo
-              </button>
-
+          <!-- IMAGEN -->
+          <div class="imagen-box text-center mb-4">
+            <div class="imagen-animal">
+              {{ imagen }}
             </div>
+          </div>
+
+          <!-- PALABRAS -->
+          <div class="palabras-grid">
+            {% for palabra in palabras %}
+            <button type="button"
+                    class="palabra-opcion"
+                    data-id="{{ palabra.id }}">
+              {{ palabra.texto }}
+            </button>
+            {% endfor %}
+          </div>
+
+          <div id="mensaje" class="text-center mt-4 fw-bold"></div>
+
+          <form id="form-imagen-palabra" method="post" class="text-center mt-3">
+            {% csrf_token %}
+            <input type="hidden" name="completado" id="completado" value="0">
           </form>
 
-          <!-- Navegación -->
-          <div class="d-flex justify-content-between mt-2">
-            <a href="{% url 'menu_actividades' %}" class="btn btn-link btn-sm">
-              ← Volver al menú
-            </a>
-            <a href="{% url 'actividad_vocal_faltante' %}" class="btn btn-link btn-sm">
-              Siguiente actividad →
+          <div class="text-center mt-3">
+            <a href="{% url 'menu_actividades' %}" class="btn btn-link">
+              ← Volver al menú de actividades
             </a>
           </div>
 
@@ -85,5 +61,160 @@
     </div>
   </div>
 </div>
+
+<style>
+  .imagen-box {
+    background: #ffffff;
+    border-radius: 24px;
+    padding: 20px;
+    box-shadow: 0 3px 12px rgba(0,0,0,0.10);
+  }
+
+  .imagen-animal {
+    width: 220px;
+    height: 220px;
+    margin: 0 auto;
+    border-radius: 28px;
+    background: #eaf6ff;
+    border: 5px solid #0077c8;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 110px;
+  }
+
+  .palabras-grid {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 18px;
+    margin-top: 20px;
+  }
+
+  .palabra-opcion {
+    min-width: 160px;
+    padding: 18px 24px;
+    border-radius: 18px;
+    border: 4px solid transparent;
+    background: #ffffff;
+    color: #004f8c;
+    font-size: 28px;
+    font-weight: bold;
+    cursor: pointer;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.12);
+    transition: transform 0.2s, border 0.2s, background 0.2s;
+  }
+
+  .palabra-opcion:hover {
+    transform: scale(1.05);
+  }
+
+  .palabra-opcion.correcto {
+    border-color: #34c759;
+    background: #e9ffe9;
+    color: #168a35;
+  }
+
+  .palabra-opcion.error {
+    border-color: #ff3b30;
+    background: #ffecec;
+    color: #c62828;
+  }
+
+  .palabra-opcion.bloqueado {
+    pointer-events: none;
+    opacity: 0.75;
+  }
+
+  @media (max-width: 700px) {
+    .imagen-animal {
+      width: 180px;
+      height: 180px;
+      font-size: 90px;
+    }
+
+    .palabra-opcion {
+      min-width: 130px;
+      font-size: 23px;
+      padding: 14px 18px;
+    }
+  }
+</style>
+
+<script>
+  (function () {
+    const opciones = document.querySelectorAll(".palabra-opcion");
+    const mensaje = document.getElementById("mensaje");
+    const form = document.getElementById("form-imagen-palabra");
+    const completado = document.getElementById("completado");
+    const btnAudio = document.getElementById("btn-audio");
+
+    const respuestaCorrecta = "{{ respuesta }}";
+    const textoAudio = "{{ instruccion_texto|escapejs }}";
+
+    let enviado = false;
+
+    btnAudio.addEventListener("click", function () {
+      if ("speechSynthesis" in window) {
+        const voz = new SpeechSynthesisUtterance(textoAudio);
+        voz.lang = "es-MX";
+        voz.rate = 0.85;
+        voz.pitch = 1.2;
+
+        const voces = window.speechSynthesis.getVoices();
+        const vozFemenina = voces.find(v =>
+          v.lang.startsWith("es") &&
+          /female|mujer|paulina|monica|sabina|luciana|helena|elvira/i.test(v.name)
+        );
+
+        if (vozFemenina) {
+          voz.voice = vozFemenina;
+        }
+
+        window.speechSynthesis.cancel();
+        window.speechSynthesis.speak(voz);
+      }
+    });
+
+    opciones.forEach(opcion => {
+      opcion.addEventListener("click", function () {
+        if (opcion.classList.contains("bloqueado")) return;
+
+        const idOpcion = opcion.dataset.id;
+
+        if (idOpcion === respuestaCorrecta) {
+          opcion.classList.add("correcto", "bloqueado");
+
+          opciones.forEach(btn => {
+            btn.classList.add("bloqueado");
+          });
+
+          mensaje.textContent = "✅ ¡Muy bien! Elegiste la palabra correcta.";
+          mensaje.style.color = "#34c759";
+
+          if (!enviado) {
+            enviado = true;
+            completado.value = "1";
+
+            setTimeout(() => {
+              form.submit();
+            }, 1200);
+          }
+
+        } else {
+          opcion.classList.add("error");
+
+          mensaje.textContent = "❌ Intenta otra vez.";
+          mensaje.style.color = "#ff3b30";
+
+          setTimeout(() => {
+            opcion.classList.remove("error");
+          }, 700);
+        }
+      });
+    });
+  })();
+</script>
 {% endblock %}
+
 

@@ -1,0 +1,238 @@
+
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container py-5" style="background-color:#f0f8ff; min-height:100vh;">
+  <div class="row justify-content-center">
+    <div class="col-md-11 col-lg-9">
+      <div class="card shadow-lg border-0 rounded-4">
+        <div class="card-body p-4 text-center">
+
+          <h2 class="mb-2" style="color:#004f8c; font-weight:700;">
+            🧠 Memoria de figuras
+          </h2>
+
+          <p class="text-muted mb-3">
+            Encuentra las cartas que son iguales.
+          </p>
+
+          <div class="text-center my-3">
+            <button type="button" id="btn-audio" class="btn btn-outline-primary rounded-pill px-4">
+              🔊 Escuchar instrucción
+            </button>
+          </div>
+
+          <div class="contador-box mb-3">
+            Pares encontrados: <span id="contador">0</span> / 6
+          </div>
+
+          <div class="tablero-memoria">
+            {% for carta in cartas %}
+            <button type="button"
+                    class="carta"
+                    data-id="{{ carta.id }}">
+              <span class="carta-frente">?</span>
+              <span class="carta-figura">{{ carta.emoji }}</span>
+            </button>
+            {% endfor %}
+          </div>
+
+          <div id="mensaje" class="text-center mt-4 fw-bold"></div>
+
+          <form id="form-memoria" method="post">
+            {% csrf_token %}
+            <input type="hidden" name="completado" id="completado" value="0">
+          </form>
+
+          <div class="text-center mt-3">
+            <a href="{% url 'menu_actividades' %}" class="btn btn-link">
+              ← Volver al menú de actividades
+            </a>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+  .contador-box {
+    display: inline-block;
+    background: #ffffff;
+    color: #004f8c;
+    font-size: 22px;
+    font-weight: bold;
+    padding: 12px 24px;
+    border-radius: 18px;
+    box-shadow: 0 3px 10px rgba(0,0,0,0.10);
+  }
+
+  .tablero-memoria {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
+    max-width: 620px;
+    margin: 25px auto 0;
+  }
+
+  .carta {
+    height: 115px;
+    border-radius: 22px;
+    border: 4px solid #0077c8;
+    background: #0077c8;
+    color: white;
+    font-size: 50px;
+    font-weight: bold;
+    cursor: pointer;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.16);
+    transition: transform 0.2s, background 0.2s, border 0.2s;
+  }
+
+  .carta:hover {
+    transform: scale(1.05);
+  }
+
+  .carta-figura {
+    display: none;
+  }
+
+  .carta.abierta {
+    background: #ffffff;
+    border-color: #34c759;
+    color: #004f8c;
+  }
+
+  .carta.abierta .carta-frente {
+    display: none;
+  }
+
+  .carta.abierta .carta-figura {
+    display: inline;
+  }
+
+  .carta.encontrada {
+    background: #e9ffe9;
+    border-color: #34c759;
+    pointer-events: none;
+  }
+
+  @media (max-width: 700px) {
+    .tablero-memoria {
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+    }
+
+    .carta {
+      height: 95px;
+      font-size: 42px;
+    }
+
+    .contador-box {
+      font-size: 18px;
+    }
+  }
+</style>
+
+<script>
+  (function () {
+    const cartas = document.querySelectorAll(".carta");
+    const contador = document.getElementById("contador");
+    const mensaje = document.getElementById("mensaje");
+    const form = document.getElementById("form-memoria");
+    const completado = document.getElementById("completado");
+    const btnAudio = document.getElementById("btn-audio");
+
+    let primeraCarta = null;
+    let segundaCarta = null;
+    let bloqueado = false;
+    let pares = 0;
+    const meta = 6;
+
+    const textoAudio = "Toca dos cartas. Busca las figuras que son iguales.";
+
+    btnAudio.addEventListener("click", function () {
+      if ("speechSynthesis" in window) {
+        const voz = new SpeechSynthesisUtterance(textoAudio);
+        voz.lang = "es-MX";
+        voz.rate = 0.85;
+        voz.pitch = 1.2;
+
+        const voces = window.speechSynthesis.getVoices();
+        const vozFemenina = voces.find(v =>
+          v.lang.startsWith("es") &&
+          /female|mujer|paulina|monica|sabina|luciana|helena|elvira/i.test(v.name)
+        );
+
+        if (vozFemenina) {
+          voz.voice = vozFemenina;
+        }
+
+        window.speechSynthesis.cancel();
+        window.speechSynthesis.speak(voz);
+      }
+    });
+
+    cartas.forEach(carta => {
+      carta.addEventListener("click", function () {
+        if (bloqueado) return;
+        if (carta.classList.contains("abierta")) return;
+        if (carta.classList.contains("encontrada")) return;
+
+        carta.classList.add("abierta");
+
+        if (!primeraCarta) {
+          primeraCarta = carta;
+          return;
+        }
+
+        segundaCarta = carta;
+        bloqueado = true;
+
+        if (primeraCarta.dataset.id === segundaCarta.dataset.id) {
+          primeraCarta.classList.add("encontrada");
+          segundaCarta.classList.add("encontrada");
+
+          pares++;
+          contador.textContent = pares;
+
+          mensaje.textContent = "✅ ¡Muy bien! Encontraste un par.";
+          mensaje.style.color = "#34c759";
+
+          primeraCarta = null;
+          segundaCarta = null;
+          bloqueado = false;
+
+          revisarFinal();
+        } else {
+          mensaje.textContent = "❌ No son iguales. Intenta otra vez.";
+          mensaje.style.color = "#ff3b30";
+
+          setTimeout(() => {
+            primeraCarta.classList.remove("abierta");
+            segundaCarta.classList.remove("abierta");
+
+            primeraCarta = null;
+            segundaCarta = null;
+            bloqueado = false;
+          }, 900);
+        }
+      });
+    });
+
+    function revisarFinal() {
+      if (pares === meta) {
+        mensaje.textContent = "🎉 ¡Excelente! Encontraste todas las parejas.";
+        mensaje.style.color = "#198754";
+
+        completado.value = "1";
+
+        setTimeout(() => {
+          form.submit();
+        }, 1500);
+      }
+    }
+  })();
+</script>
+{% endblock %}
+

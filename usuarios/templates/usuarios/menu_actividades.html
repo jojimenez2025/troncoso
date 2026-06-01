@@ -72,6 +72,7 @@
             display: flex;
             flex-wrap: wrap;
             gap: 18px;
+            margin-top: 30px;
             justify-content: center;
         }
 
@@ -80,7 +81,7 @@
             padding: 20px;
             border-radius: 16px;
             box-shadow: 0 3px 10px rgba(0,0,0,0.08);
-            width: 260px;
+            width: 280px;
             text-align: center;
             border: 2px solid #e3f1ff;
         }
@@ -222,48 +223,44 @@
 
         <div class="cards">
             <div class="card">
-                <h3>🐶 Imagen y palabra</h3>
-                <p>Selecciona la palabra que corresponde a la imagen.</p>
+                <h3>🐶 Animales y palabras</h3>
+                <p>Observa la imagen del animal y selecciona la palabra correcta.</p>
                 <a href="{% url 'actividad_imagen_palabra' %}">Empezar</a>
             </div>
         </div>
     </div>
 
+    
+ 
+
     <!-- BLOQUE 4 -->
-    <div class="bloque">
-        <h2>🔤 Bloque 4: Letras y sílabas</h2>
-        <p class="bloque-descripcion">
-            Actividades para trabajar vocales, sílabas iniciales y formación de palabras.
-        </p>
+<div class="bloque">
+    <h2>🎮 Bloque 4: Recompensa</h2>
+    <p class="bloque-descripcion">
+        Juegos breves de recompensa para motivar al niño después de completar actividades.
+    </p>
 
-        <div class="cards">
-            <div class="card">
-                <h3>🔤 Vocal faltante</h3>
-                <p>Selecciona la vocal que falta para completar la palabra.</p>
-                <a href="{% url 'actividad_vocal_faltante' %}">Empezar</a>
-            </div>
-
-            <div class="card">
-                <h3>🧩 Sílaba inicial</h3>
-                <p>Elige la sílaba con la que empieza la palabra.</p>
-                <a href="{% url 'actividad_silaba_inicial' %}">Empezar</a>
-            </div>
-        </div>
-    </div>
-
-    <!-- BLOQUE 5 -->
-    <div class="bloque">
-        <h2>🎮 Bloque 5: Recompensa</h2>
-        <p class="bloque-descripcion">
-            Juego breve de recompensa para motivar al niño después de completar actividades.
-        </p>
-
+    <div class="cards">
         <div class="card">
             <h3>⭐ Atrapa estrellas</h3>
-            <p>Juego breve de recompensa para motivar al niño después de completar actividades.</p>
+            <p>Toca las estrellas que aparecen en la pantalla.</p>
             <a href="{% url 'actividad_recompensa_estrellas' %}">Empezar</a>
         </div>
+
+        <div class="card">
+            <h3>🧠 Memoria de figuras</h3>
+            <p>Encuentra las parejas de cartas con figuras aleatorias.</p>
+            <a href="{% url 'actividad_memoria_figuras' %}">Empezar</a>
+        </div>
+
+        <div class="card">
+            <h3>🎨 Colorear dibujo</h3>
+            <p>Escoge colores y colorea un dibujo aleatorio.</p>
+            <a href="{% url 'actividad_colorear_dibujo' %}">Empezar</a>
+        </div>
+
     </div>
+</div>
 
 </div>
 

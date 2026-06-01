@@ -274,32 +274,164 @@ def menu_actividades(request):
 
 @login_required
 @user_passes_test(es_nino)
-def actividad_imagen_palabra(request):
+def actividad_imagen_palabra(request, nivel=1):
     """
-    Actividad: relacionar imagen de un PERRO con la palabra escrita 'perro'.
-    Si acierta, se registra progreso.
+    Bloque 3: Imagen y palabra.
+    El niño observa una imagen de animal y selecciona la palabra correcta.
     """
-    resultado = None
 
-    if request.method == 'POST':
-        respuesta = request.POST.get('respuesta', '').strip().lower()
-        if respuesta == 'perro':
-            resultado = "✅ ¡Muy bien! Has acertado."
+    ejercicios = {
+        1: {
+            "titulo": "Imagen y palabra",
+            "nombre_actividad": "Imagen y palabra - Perro",
+            "descripcion": "Relacionar la imagen de un perro con la palabra PERRO.",
+            "instruccion": "Mira la imagen. Toca la palabra correcta.",
+            "imagen": "🐶",
+            "respuesta": "perro",
+            "palabras": [
+                {"id": "perro", "texto": "PERRO"},
+                {"id": "gato", "texto": "GATO"},
+                {"id": "pato", "texto": "PATO"},
+                {"id": "caballo", "texto": "CABALLO"},
+            ],
+        },
+
+        2: {
+            "titulo": "Imagen y palabra",
+            "nombre_actividad": "Imagen y palabra - Gato",
+            "descripcion": "Relacionar la imagen de un gato con la palabra GATO.",
+            "instruccion": "Mira la imagen. Toca la palabra correcta.",
+            "imagen": "🐱",
+            "respuesta": "gato",
+            "palabras": [
+                {"id": "perro", "texto": "PERRO"},
+                {"id": "gato", "texto": "GATO"},
+                {"id": "pato", "texto": "PATO"},
+                {"id": "vaca", "texto": "VACA"},
+            ],
+        },
+
+        3: {
+            "titulo": "Imagen y palabra",
+            "nombre_actividad": "Imagen y palabra - Pato",
+            "descripcion": "Relacionar la imagen de un pato con la palabra PATO.",
+            "instruccion": "Mira la imagen. Toca la palabra correcta.",
+            "imagen": "🦆",
+            "respuesta": "pato",
+            "palabras": [
+                {"id": "pato", "texto": "PATO"},
+                {"id": "gato", "texto": "GATO"},
+                {"id": "conejo", "texto": "CONEJO"},
+                {"id": "pez", "texto": "PEZ"},
+            ],
+        },
+
+        4: {
+            "titulo": "Imagen y palabra",
+            "nombre_actividad": "Imagen y palabra - Caballo",
+            "descripcion": "Relacionar la imagen de un caballo con la palabra CABALLO.",
+            "instruccion": "Mira la imagen. Toca la palabra correcta.",
+            "imagen": "🐴",
+            "respuesta": "caballo",
+            "palabras": [
+                {"id": "vaca", "texto": "VACA"},
+                {"id": "caballo", "texto": "CABALLO"},
+                {"id": "perro", "texto": "PERRO"},
+                {"id": "gato", "texto": "GATO"},
+            ],
+        },
+
+        5: {
+            "titulo": "Imagen y palabra",
+            "nombre_actividad": "Imagen y palabra - Vaca",
+            "descripcion": "Relacionar la imagen de una vaca con la palabra VACA.",
+            "instruccion": "Mira la imagen. Toca la palabra correcta.",
+            "imagen": "🐄",
+            "respuesta": "vaca",
+            "palabras": [
+                {"id": "vaca", "texto": "VACA"},
+                {"id": "caballo", "texto": "CABALLO"},
+                {"id": "conejo", "texto": "CONEJO"},
+                {"id": "pez", "texto": "PEZ"},
+            ],
+        },
+
+        6: {
+            "titulo": "Imagen y palabra",
+            "nombre_actividad": "Imagen y palabra - Conejo",
+            "descripcion": "Relacionar la imagen de un conejo con la palabra CONEJO.",
+            "instruccion": "Mira la imagen. Toca la palabra correcta.",
+            "imagen": "🐰",
+            "respuesta": "conejo",
+            "palabras": [
+                {"id": "conejo", "texto": "CONEJO"},
+                {"id": "gato", "texto": "GATO"},
+                {"id": "pato", "texto": "PATO"},
+                {"id": "perro", "texto": "PERRO"},
+            ],
+        },
+
+        7: {
+            "titulo": "Imagen y palabra",
+            "nombre_actividad": "Imagen y palabra - Pez",
+            "descripcion": "Relacionar la imagen de un pez con la palabra PEZ.",
+            "instruccion": "Mira la imagen. Toca la palabra correcta.",
+            "imagen": "🐟",
+            "respuesta": "pez",
+            "palabras": [
+                {"id": "pez", "texto": "PEZ"},
+                {"id": "pato", "texto": "PATO"},
+                {"id": "vaca", "texto": "VACA"},
+                {"id": "conejo", "texto": "CONEJO"},
+            ],
+        },
+    }
+
+    if nivel not in ejercicios:
+        return redirect("menu_actividades")
+
+    ejercicio = ejercicios[nivel]
+
+    palabras = ejercicio["palabras"].copy()
+    random.shuffle(palabras)
+
+    if request.method == "POST":
+        completado = request.POST.get("completado") == "1"
+
+        if completado:
             actividad, _ = Actividad.objects.get_or_create(
-                nombre='Imagen y palabra: PERRO',
+                nombre=ejercicio["nombre_actividad"],
                 defaults={
-                    'descripcion': 'Relacionar la imagen de un perro con la palabra escrita.',
+                    "descripcion": ejercicio["descripcion"]
                 }
             )
+
             Progreso.objects.create(
                 nino=request.user,
                 actividad=actividad,
             )
-        else:
-            resultado = "❌ Intenta de nuevo."
 
-    return render(request, 'usuarios/actividad_imagen_palabra.html', {'resultado': resultado})
+            siguiente_nivel = nivel + 1
 
+            if siguiente_nivel in ejercicios:
+                return redirect("actividad_imagen_palabra_nivel", nivel=siguiente_nivel)
+            else:
+                messages.success(
+                    request,
+                    "✅ ¡Muy bien! Terminaste el bloque de imagen y palabra."
+                )
+                return redirect("menu_actividades")
+
+    contexto = {
+        "nivel": nivel,
+        "titulo_actividad": ejercicio["titulo"],
+        "instruccion_texto": ejercicio["instruccion"],
+        "imagen": ejercicio["imagen"],
+        "respuesta": ejercicio["respuesta"],
+        "palabras": palabras,
+    }
+
+    return render(request, "usuarios/actividad_imagen_palabra.html", contexto)
 
 @login_required
 @user_passes_test(es_nino)
@@ -1632,5 +1764,146 @@ def actividad_recompensa_estrellas(request):
             return redirect("menu_actividades")
 
     return render(request, "usuarios/actividad_recompensa_estrellas.html")
+
+@login_required
+@user_passes_test(es_nino)
+def actividad_memoria_figuras(request):
+    """
+    Bloque de recompensa:
+    Juego de memoria con 6 pares de figuras.
+    Cada vez que inicia, se seleccionan 6 figuras aleatorias
+    de una lista de 20.
+    """
+
+    if request.method == "POST":
+        completado = request.POST.get("completado") == "1"
+
+        if completado:
+            actividad, _ = Actividad.objects.get_or_create(
+                nombre="Juego de recompensa - Memoria de figuras",
+                defaults={
+                    "descripcion": "Juego de memoria con cartas y figuras aleatorias."
+                }
+            )
+
+            Progreso.objects.create(
+                nino=request.user,
+                actividad=actividad,
+            )
+
+            messages.success(
+                request,
+                "🧠 ¡Muy bien! Terminaste el juego de memoria."
+            )
+
+            return redirect("menu_actividades")
+
+    figuras_base = [
+        {"id": "perro", "emoji": "🐶"},
+        {"id": "gato", "emoji": "🐱"},
+        {"id": "pato", "emoji": "🦆"},
+        {"id": "vaca", "emoji": "🐄"},
+        {"id": "conejo", "emoji": "🐰"},
+        {"id": "pez", "emoji": "🐟"},
+        {"id": "caballo", "emoji": "🐴"},
+        {"id": "oso", "emoji": "🐻"},
+        {"id": "estrella", "emoji": "⭐"},
+        {"id": "sol", "emoji": "☀️"},
+        {"id": "luna", "emoji": "🌙"},
+        {"id": "flor", "emoji": "🌼"},
+        {"id": "arbol", "emoji": "🌳"},
+        {"id": "manzana", "emoji": "🍎"},
+        {"id": "pera", "emoji": "🍐"},
+        {"id": "pelota", "emoji": "⚽"},
+        {"id": "auto", "emoji": "🚗"},
+        {"id": "tren", "emoji": "🚆"},
+        {"id": "casa", "emoji": "🏠"},
+        {"id": "zapato", "emoji": "👟"},
+    ]
+
+    # Tomamos 6 figuras diferentes de las 20
+    seleccionadas = random.sample(figuras_base, 6)
+
+    cartas = []
+
+    # Cada figura se agrega dos veces para formar pares
+    for figura in seleccionadas:
+        cartas.append({
+            "id": figura["id"],
+            "emoji": figura["emoji"],
+        })
+        cartas.append({
+            "id": figura["id"],
+            "emoji": figura["emoji"],
+        })
+
+    # Revolvemos las cartas
+    random.shuffle(cartas)
+
+    contexto = {
+        "cartas": cartas,
+    }
+
+    return render(request, "usuarios/actividad_memoria_figuras.html", contexto)
+
+@login_required
+@user_passes_test(es_nino)
+def actividad_colorear_dibujo(request):
+    """
+    Bloque de recompensa:
+    Juego para colorear un dibujo aleatorio.
+    El niño escoge un color y toca partes del dibujo.
+    """
+
+    if request.method == "POST":
+        completado = request.POST.get("completado") == "1"
+
+        if completado:
+            actividad, _ = Actividad.objects.get_or_create(
+                nombre="Juego de recompensa - Colorear dibujo",
+                defaults={
+                    "descripcion": "Juego de colorear un dibujo usando una paleta de colores."
+                }
+            )
+
+            Progreso.objects.create(
+                nino=request.user,
+                actividad=actividad,
+            )
+
+            messages.success(
+                request,
+                "🎨 ¡Muy bien! Terminaste el juego de colorear."
+            )
+
+            return redirect("menu_actividades")
+
+    dibujos = [
+        {"id": "casa", "nombre": "Casa"},
+        {"id": "flor", "nombre": "Flor"},
+        {"id": "pez", "nombre": "Pez"},
+        {"id": "sol", "nombre": "Sol"},
+        {"id": "arbol", "nombre": "Árbol"},
+        {"id": "auto", "nombre": "Auto"},
+        {"id": "mariposa", "nombre": "Mariposa"},
+        {"id": "estrella", "nombre": "Estrella"},
+        {"id": "barco", "nombre": "Barco"},
+        {"id": "corazon", "nombre": "Corazón"},
+    ]
+
+    ultimo_dibujo = request.session.get("ultimo_dibujo_colorear")
+
+    disponibles = [d for d in dibujos if d["id"] != ultimo_dibujo]
+
+    dibujo = random.choice(disponibles)
+
+    request.session["ultimo_dibujo_colorear"] = dibujo["id"]
+
+    contexto = {
+        "dibujo_id": dibujo["id"],
+        "dibujo_nombre": dibujo["nombre"],
+    }
+
+    return render(request, "usuarios/actividad_colorear_dibujo.html", contexto)
 
 

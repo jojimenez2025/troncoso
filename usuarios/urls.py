@@ -31,6 +31,11 @@ urlpatterns = [
     # Actividades (niño)
     path('menu_actividades/', views.menu_actividades, name='menu_actividades'),
     path('actividad/imagen-palabra/', views.actividad_imagen_palabra, name='actividad_imagen_palabra'),
+    path(
+    "actividad/imagen-palabra/<int:nivel>/",
+    views.actividad_imagen_palabra,
+    name="actividad_imagen_palabra_nivel",),
+    
     path('actividad/vocal-faltante/', views.actividad_vocal_faltante, name='actividad_vocal_faltante'),
     path('actividad/silaba-inicial/', views.actividad_silaba_inicial, name='actividad_silaba_inicial'),
     
@@ -64,5 +69,14 @@ urlpatterns = [
     views.actividad_recompensa_estrellas,
     name="actividad_recompensa_estrellas",),
     
+    path(
+    "actividad/memoria-figuras/",
+    views.actividad_memoria_figuras,
+    name="actividad_memoria_figuras",),
+    
+    path(
+    "actividad/colorear-dibujo/",
+    views.actividad_colorear_dibujo,
+    name="actividad_colorear_dibujo",),
     
 ]

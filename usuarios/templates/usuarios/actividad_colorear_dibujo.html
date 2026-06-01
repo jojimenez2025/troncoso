@@ -1,0 +1,371 @@
+
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container py-5" style="background-color:#f0f8ff; min-height:100vh;">
+  <div class="row justify-content-center">
+    <div class="col-md-12 col-lg-10">
+      <div class="card shadow-lg border-0 rounded-4">
+        <div class="card-body p-4">
+
+          <h2 class="text-center mb-2" style="color:#004f8c; font-weight:700;">
+            🎨 Colorear dibujo
+          </h2>
+
+          <p class="text-center text-muted mb-2">
+            Dibujo: {{ dibujo_nombre }}
+          </p>
+
+          <div class="text-center my-3">
+            <button type="button" id="btn-audio" class="btn btn-outline-primary rounded-pill px-4">
+              🔊 Escuchar instrucción
+            </button>
+          </div>
+
+          <p class="text-center mb-4">
+            Escoge un color y toca una parte del dibujo para colorearla.
+          </p>
+
+          <div class="zona-colorear">
+
+            <div class="dibujo-box">
+
+              {% if dibujo_id == "casa" %}
+              <svg viewBox="0 0 300 300" class="dibujo-svg">
+                <polygon class="zona-color" points="70,135 150,65 230,135"></polygon>
+                <rect class="zona-color" x="90" y="135" width="120" height="100"></rect>
+                <rect class="zona-color" x="135" y="175" width="35" height="60"></rect>
+                <rect class="zona-color" x="105" y="155" width="25" height="25"></rect>
+                <rect class="zona-color" x="175" y="155" width="25" height="25"></rect>
+              </svg>
+              {% endif %}
+
+              {% if dibujo_id == "flor" %}
+              <svg viewBox="0 0 300 300" class="dibujo-svg">
+                <circle class="zona-color" cx="150" cy="120" r="30"></circle>
+                <circle class="zona-color" cx="150" cy="70" r="35"></circle>
+                <circle class="zona-color" cx="150" cy="170" r="35"></circle>
+                <circle class="zona-color" cx="100" cy="120" r="35"></circle>
+                <circle class="zona-color" cx="200" cy="120" r="35"></circle>
+                <rect class="zona-color" x="142" y="170" width="16" height="85"></rect>
+                <ellipse class="zona-color" cx="115" cy="220" rx="35" ry="15"></ellipse>
+                <ellipse class="zona-color" cx="185" cy="220" rx="35" ry="15"></ellipse>
+              </svg>
+              {% endif %}
+
+              {% if dibujo_id == "pez" %}
+              <svg viewBox="0 0 300 300" class="dibujo-svg">
+                <ellipse class="zona-color" cx="145" cy="150" rx="75" ry="45"></ellipse>
+                <polygon class="zona-color" points="215,150 270,100 270,200"></polygon>
+                <circle class="zona-color" cx="110" cy="140" r="8"></circle>
+                <ellipse class="zona-color" cx="160" cy="105" rx="35" ry="18"></ellipse>
+                <ellipse class="zona-color" cx="160" cy="195" rx="35" ry="18"></ellipse>
+              </svg>
+              {% endif %}
+
+              {% if dibujo_id == "sol" %}
+              <svg viewBox="0 0 300 300" class="dibujo-svg">
+                <circle class="zona-color" cx="150" cy="150" r="60"></circle>
+                <polygon class="zona-color" points="150,20 170,80 130,80"></polygon>
+                <polygon class="zona-color" points="150,280 130,220 170,220"></polygon>
+                <polygon class="zona-color" points="20,150 80,130 80,170"></polygon>
+                <polygon class="zona-color" points="280,150 220,130 220,170"></polygon>
+                <polygon class="zona-color" points="60,60 110,90 90,110"></polygon>
+                <polygon class="zona-color" points="240,60 190,90 210,110"></polygon>
+                <polygon class="zona-color" points="60,240 90,190 110,210"></polygon>
+                <polygon class="zona-color" points="240,240 210,190 190,210"></polygon>
+              </svg>
+              {% endif %}
+
+              {% if dibujo_id == "arbol" %}
+              <svg viewBox="0 0 300 300" class="dibujo-svg">
+                <rect class="zona-color" x="130" y="160" width="40" height="90"></rect>
+                <circle class="zona-color" cx="150" cy="105" r="55"></circle>
+                <circle class="zona-color" cx="105" cy="135" r="45"></circle>
+                <circle class="zona-color" cx="195" cy="135" r="45"></circle>
+                <circle class="zona-color" cx="150" cy="155" r="45"></circle>
+              </svg>
+              {% endif %}
+
+              {% if dibujo_id == "auto" %}
+              <svg viewBox="0 0 300 300" class="dibujo-svg">
+                <rect class="zona-color" x="55" y="135" width="190" height="55" rx="15"></rect>
+                <polygon class="zona-color" points="95,135 125,95 185,95 215,135"></polygon>
+                <circle class="zona-color" cx="95" cy="195" r="22"></circle>
+                <circle class="zona-color" cx="205" cy="195" r="22"></circle>
+                <rect class="zona-color" x="130" y="105" width="45" height="28"></rect>
+              </svg>
+              {% endif %}
+
+              {% if dibujo_id == "mariposa" %}
+              <svg viewBox="0 0 300 300" class="dibujo-svg">
+                <ellipse class="zona-color" cx="105" cy="110" rx="55" ry="70"></ellipse>
+                <ellipse class="zona-color" cx="195" cy="110" rx="55" ry="70"></ellipse>
+                <ellipse class="zona-color" cx="115" cy="190" rx="45" ry="50"></ellipse>
+                <ellipse class="zona-color" cx="185" cy="190" rx="45" ry="50"></ellipse>
+                <rect class="zona-color" x="140" y="85" width="20" height="130" rx="10"></rect>
+                <circle class="zona-color" cx="115" cy="45" r="10"></circle>
+                <circle class="zona-color" cx="185" cy="45" r="10"></circle>
+              </svg>
+              {% endif %}
+
+              {% if dibujo_id == "estrella" %}
+              <svg viewBox="0 0 300 300" class="dibujo-svg">
+                <polygon class="zona-color" points="150,35 180,115 265,115 195,165 220,250 150,200 80,250 105,165 35,115 120,115"></polygon>
+              </svg>
+              {% endif %}
+
+              {% if dibujo_id == "barco" %}
+              <svg viewBox="0 0 300 300" class="dibujo-svg">
+                <polygon class="zona-color" points="70,190 230,190 200,240 100,240"></polygon>
+                <rect class="zona-color" x="145" y="70" width="10" height="120"></rect>
+                <polygon class="zona-color" points="155,80 225,160 155,160"></polygon>
+                <polygon class="zona-color" points="145,90 80,160 145,160"></polygon>
+              </svg>
+              {% endif %}
+
+              {% if dibujo_id == "corazon" %}
+              <svg viewBox="0 0 300 300" class="dibujo-svg">
+                <path class="zona-color" d="M150 245 C60 165 40 95 90 65 C120 45 145 65 150 90 C155 65 180 45 210 65 C260 95 240 165 150 245 Z"></path>
+              </svg>
+              {% endif %}
+
+            </div>
+
+            <div class="paleta-box">
+              <h3>Colores</h3>
+
+              <button class="color-btn" type="button" data-color="#ff0000" style="background:#ff0000;"></button>
+              <button class="color-btn" type="button" data-color="#0077ff" style="background:#0077ff;"></button>
+              <button class="color-btn" type="button" data-color="#ffeb00" style="background:#ffeb00;"></button>
+              <button class="color-btn" type="button" data-color="#00b050" style="background:#00b050;"></button>
+              <button class="color-btn" type="button" data-color="#ff9900" style="background:#ff9900;"></button>
+              <button class="color-btn" type="button" data-color="#8000ff" style="background:#8000ff;"></button>
+              <button class="color-btn" type="button" data-color="#ff66cc" style="background:#ff66cc;"></button>
+              <button class="color-btn" type="button" data-color="#8b4513" style="background:#8b4513;"></button>
+              <button class="color-btn" type="button" data-color="#000000" style="background:#000000;"></button>
+              <button class="color-btn color-blanco" type="button" data-color="#ffffff" style="background:#ffffff;"></button>
+
+              <button id="btn-limpiar" type="button" class="btn btn-warning mt-3">
+                Limpiar
+              </button>
+
+              <button id="btn-terminar" type="button" class="btn btn-success mt-3" disabled>
+                Terminar dibujo
+              </button>
+            </div>
+
+          </div>
+
+          <div id="mensaje" class="text-center mt-4 fw-bold"></div>
+
+          <form id="form-colorear" method="post">
+            {% csrf_token %}
+            <input type="hidden" name="completado" id="completado" value="0">
+          </form>
+
+          <div class="text-center mt-3">
+            <a href="{% url 'menu_actividades' %}" class="btn btn-link">
+              ← Volver al menú de actividades
+            </a>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+  .zona-colorear {
+    display: flex;
+    gap: 25px;
+    justify-content: center;
+    align-items: flex-start;
+  }
+
+  .dibujo-box {
+    background: #ffffff;
+    border-radius: 24px;
+    padding: 20px;
+    box-shadow: 0 3px 12px rgba(0,0,0,0.12);
+    flex: 1;
+    max-width: 620px;
+  }
+
+  .dibujo-svg {
+    width: 100%;
+    max-height: 520px;
+  }
+
+  .zona-color {
+    fill: #ffffff;
+    stroke: #111;
+    stroke-width: 5;
+    cursor: pointer;
+    transition: fill 0.2s, opacity 0.2s;
+  }
+
+  .zona-color:hover {
+    opacity: 0.85;
+  }
+
+  .paleta-box {
+    width: 160px;
+    background: #ffffff;
+    border-radius: 24px;
+    padding: 18px;
+    box-shadow: 0 3px 12px rgba(0,0,0,0.12);
+    text-align: center;
+  }
+
+  .paleta-box h3 {
+    color: #004f8c;
+    font-size: 20px;
+    margin-bottom: 12px;
+  }
+
+  .color-btn {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    border: 4px solid #ddd;
+    margin: 6px;
+    cursor: pointer;
+  }
+
+  .color-btn.seleccionado {
+    border-color: #004f8c;
+    transform: scale(1.12);
+  }
+
+  .color-blanco {
+    border-color: #999;
+  }
+
+  #btn-limpiar,
+  #btn-terminar {
+    width: 100%;
+    border-radius: 14px;
+    font-weight: bold;
+  }
+
+  @media (max-width: 850px) {
+    .zona-colorear {
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .paleta-box {
+      width: 100%;
+      max-width: 420px;
+    }
+  }
+</style>
+
+<script>
+  (function () {
+    const zonas = document.querySelectorAll(".zona-color");
+    const botonesColor = document.querySelectorAll(".color-btn");
+    const btnLimpiar = document.getElementById("btn-limpiar");
+    const btnTerminar = document.getElementById("btn-terminar");
+    const btnAudio = document.getElementById("btn-audio");
+    const mensaje = document.getElementById("mensaje");
+    const form = document.getElementById("form-colorear");
+    const completado = document.getElementById("completado");
+
+    let colorActual = "#ff0000";
+    let partesPintadas = 0;
+
+    const textoAudio = "Escoge un color y toca una parte del dibujo para colorearla.";
+
+    // Seleccionar color
+    botonesColor.forEach(btn => {
+      btn.addEventListener("click", function () {
+        botonesColor.forEach(b => b.classList.remove("seleccionado"));
+
+        btn.classList.add("seleccionado");
+        colorActual = btn.dataset.color;
+
+        mensaje.textContent = "Color seleccionado. Ahora toca el dibujo.";
+        mensaje.style.color = "#004f8c";
+      });
+    });
+
+    // Color rojo seleccionado por defecto
+    if (botonesColor.length > 0) {
+      botonesColor[0].classList.add("seleccionado");
+      colorActual = botonesColor[0].dataset.color;
+    }
+
+    // Pintar zonas del dibujo
+    zonas.forEach(zona => {
+      zona.addEventListener("click", function () {
+        zona.style.fill = colorActual;
+
+        if (!zona.dataset.pintada) {
+          zona.dataset.pintada = "1";
+          partesPintadas++;
+        }
+
+        mensaje.textContent = "🎨 ¡Muy bien! Sigue coloreando.";
+        mensaje.style.color = "#34c759";
+
+        btnTerminar.disabled = false;
+      });
+    });
+
+    // Limpiar dibujo
+    btnLimpiar.addEventListener("click", function () {
+      zonas.forEach(zona => {
+        zona.style.fill = "#ffffff";
+        delete zona.dataset.pintada;
+      });
+
+      partesPintadas = 0;
+      btnTerminar.disabled = true;
+
+      mensaje.textContent = "Dibujo limpio. Puedes colorear otra vez.";
+      mensaje.style.color = "#004f8c";
+    });
+
+    // Terminar actividad
+    btnTerminar.addEventListener("click", function () {
+      if (partesPintadas <= 0) return;
+
+      completado.value = "1";
+
+      mensaje.textContent = "🎉 ¡Excelente! Terminaste tu dibujo.";
+      mensaje.style.color = "#198754";
+
+      setTimeout(() => {
+        form.submit();
+      }, 1200);
+    });
+
+    // Audio
+    btnAudio.addEventListener("click", function () {
+      if ("speechSynthesis" in window) {
+        const voz = new SpeechSynthesisUtterance(textoAudio);
+        voz.lang = "es-MX";
+        voz.rate = 0.85;
+        voz.pitch = 1.2;
+
+        const voces = window.speechSynthesis.getVoices();
+        const vozFemenina = voces.find(v =>
+          v.lang.startsWith("es") &&
+          /female|mujer|paulina|monica|sabina|luciana|helena|elvira/i.test(v.name)
+        );
+
+        if (vozFemenina) {
+          voz.voice = vozFemenina;
+        }
+
+        window.speechSynthesis.cancel();
+        window.speechSynthesis.speak(voz);
+      }
+    });
+  })();
+</script>
+{% endblock %}
+
